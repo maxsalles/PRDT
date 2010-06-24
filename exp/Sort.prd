@@ -1,0 +1,31 @@
+@uses(
+    "std/IO.itf";
+    "std/Time.itf";
+    "std/Vector.itf";
+);
+
+procedure sort : (vector[]; @const int procedure comparator) {
+    @const BIGGER  = 0;
+    @const SMALLER = 1;
+    unsigned initial_position = Vector::len(vector) / 2;
+
+    for (int i = 0; i < initial_position; { i ++ }) {
+        if (comparator(vector[initial_position]; vector(i)) == BIGGER) {
+            tmp = vector[initial_position];
+            vector[initial_position] = vector[i];
+            vector[i] = tmp;
+
+            sort(vector[(i + 1)..(Vector::len(vector) - 1)]);
+        }
+    }
+};
+
+@main int procedure main : {
+    sort(
+        [1; 10; 20; 5; 0; 0; 55; 23; 40; 60; 30; 1; 2; 3; 50];
+        int procedure comparator : (@const int left; @const int right) {
+            (comparator = select(left > right; 0; 1)).return();
+        }
+    );
+};
+

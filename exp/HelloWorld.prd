@@ -1,0 +1,6 @@
+@uses("prd/IO.itf");
+
+@main int procedure main : {
+    IO::stdout += "Hello, World!\n"
+};
+
