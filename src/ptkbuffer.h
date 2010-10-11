@@ -7,44 +7,42 @@
 
 /* ========================================================================== */
 
-#ifndef PTB_TYPES
-#define PTB_TYPES
+#ifndef PRD_TOKEN_BUFFER_LIB
+#define PRD_TOKEN_BUFFER_LIB
 
 #include <stdio.h>
-#include <stdlib.h>
 
-#include "ptypes.h"
-#include "pscan.h"
+#include "ptoken.h"
 
 /* ========================================================================== */
 
-typedef struct PtbNode {
-    PtyToken token;
-    struct PtbNode* next;
-    struct PtbNode* previous;
-} PtbNode;
+typedef struct PTBNode_ST {
+    PTYToken_ST token;
+    struct PTBNode_ST* next;
+    struct PTBNode_ST* previous;
+} PTBNode_ST;
 
 typedef struct {
     unsigned size;
-    PtbNode* first;
-    PtbNode* last;
-    PtbNode* current;
-    FILE*    source_code;
-} PtbBuffer;
+    PTBNode_ST* first;
+    PTBNode_ST* last;
+    PTBNode_ST* current;
+    FILE* source_code;
+} PTBBuffer_ST;
 
 /* ========================================================================== */
 
-PtbBuffer ptbNew (FILE* source_code);
+PTBBuffer_ST ptbDefBuffer (FILE* source_code);
 
-PtyToken ptbGetToken (PtbBuffer *buffer)
+PTYToken_ST ptbGetToken (PTBBuffer_ST* buffer);
 
-PtyToken ptbGoBack (PtbBuffer *buffer);
+PTYToken_ST ptbGoBack (PTBBuffer_ST* buffer);
 
-PtyToken ptbLookNextToken (PtbBuffer *buffer);
+PTYToken_ST ptbLookNextToken (PTBBuffer_ST* buffer);
 
-PtyToken ptbLookPreviousToken (PtbBuffer *buffer);
+PTYToken_ST ptbLookPreviousToken (PTBBuffer_ST* buffer);
 
-PtyToken ptbLookCurrentToken (PtbBuffer *buffer);
+PTYToken_ST ptbLookCurrentToken (PTBBuffer_ST* buffer);
 
 /* ========================================================================== */
 

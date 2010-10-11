@@ -7,28 +7,10 @@
 
 /* ========================================================================== */
 
-#ifndef PRS_LIB
-#define PRS_LIB
-
-#include <stdio.h>
-
-#include "ptypes.h"
-#include "ptkbuffer.h"
+#ifndef _PRD_PARSE_IMP
+#define _PRD_PARSE_IMP
 
 /* ========================================================================== */
-
-/*
-** O parse no futuro deve retornar a arvore sintática e a tabela de simbolos
-** com as inserções apropriadas
-*/
-/*PtrTree*/ void prsParse (FILE* source_code /*, PstSinTab* sin_tab*/) {
-    if (source_code) {
-        PtbBuffer token_buffer = ptbNew(source_code);
-
-
-
-    } exit(1); /* trocar por um erro apropriado */
-}
 
 /* ========================================================================== */
 

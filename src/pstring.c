@@ -7,18 +7,18 @@
 
 /* ========================================================================== */
 
-#ifndef PRD_STRING
-#define PRD_STRING
+#ifndef _PRD_STRING_IMP
+#define _PRD_STRING_IMP
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define PST_NOT_PRESENT (-1)
+#include "pstring.h"
 
 /* ========================================================================== */
 
-char* pstPersist (const char* string) {
+char* pstCopy (const char* string) {
     if (string) {
         char* string_copy = (char*) malloc(sizeof(char) * (strlen(string) + 1));
 
@@ -53,7 +53,7 @@ char* pstCharToString (char character) {
 
 char* pstAddChar (char* string, unsigned position, char character) {
     if (string && position <= strlen(string)) {
-        string[position]     = character;
+        string[position] = character;
         string[position + 1] = '\0';
     }
 
@@ -62,7 +62,9 @@ char* pstAddChar (char* string, unsigned position, char character) {
 
 char* pstCharApend (char** string, char character) {
     if (string) {
-        char* string_aux = (char*) realloc(*string, sizeof(char*) * (strlen(*string) + 1));
+        char* string_aux = (char*) realloc(
+			*string, sizeof(char*) * (strlen(*string) + 1)
+		);
 
         if (string_aux) {
             if (*string != string_aux) {

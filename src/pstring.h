@@ -7,18 +7,14 @@
 
 /* ========================================================================== */
 
-#ifndef PRD_STRING
-#define PRD_STRING
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ifndef _PRD_STRING_LIB
+#define _PRD_STRING_LIB
 
 #define PST_NOT_PRESENT (-1)
 
 /* ========================================================================== */
 
-char* pstPersist (const char* string);
+char* pstCopy (const char* string);
 
 int pstLocationOf (const char* string, const char** array);
 

@@ -7,22 +7,18 @@
 
 /* ========================================================================== */
 
-#ifndef PRD_SCAN
-#define PRD_SCAN
+#ifndef _PRD_SCAN_LIB
+#define _PRD_SCAN_LIB
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
 
-#include "pstring.h"
-#include "ptypes.h"
+#include "ptoken.h"
 
 /* ========================================================================== */
 
-PtyToken pscGetToken (FILE* source_code);
+PTYToken_ST pscGetToken (FILE* source_code);
 
-PtyToken pscGetTokenIgnoring (int token, FILE* source_code);
+PTYToken_ST pscGetTokenIgnoring (int token, FILE* source_code);
 
 /* ========================================================================== */
 

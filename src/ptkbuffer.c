@@ -7,48 +7,33 @@
 
 /* ========================================================================== */
 
-#ifndef PTB_TYPES
-#define PTB_TYPES
+#ifndef PRD_TOKEN_BUFFER_IMP
+#define PRD_TOKEN_BUFFER_IMP
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ptypes.h"
+#include "ptkbuffer.h"
+#include "ptoken.h"
 #include "pscan.h"
 
 /* ========================================================================== */
 
-typedef struct PtbNode {
-    PtyToken token;
-    struct PtbNode* next;
-    struct PtbNode* previous;
-} PtbNode;
-
-typedef struct {
-    unsigned size;
-    PtbNode* first;
-    PtbNode* last;
-    PtbNode* current;
-    FILE*    source_code;
-} PtbBuffer;
-
-/* ========================================================================== */
-
-PtbNode* ptbAllocNode (PtyToken token, PtbNode* previous) {
-    PtbNode* node_p_return  = (PtbNode*) malloc(sizeof(PtbNode));
+static PTBNode_ST* allocNode (PTYToken_ST token, PTBNode_ST* previous) {
+    PTBNode_ST* node_p_return  = (PTBNode_ST*) malloc(sizeof(PTBNode_ST));
 
     if (node_p_return) {
-        node_p_return->token    = ptyCopyToken(token);
-        node_p_return->next     = NULL;
+        node_p_return->token = ptyCopyToken(token);
+        node_p_return->next = NULL;
         node_p_return->previous = previous;
 
         return node_p_return;
     } exit(1); /* trocar por um erro apropriado */
 }
 
-PtbBuffer ptbInsertNode (PtbBuffer* buffer) {
+static PTBBuffer_ST insertNode (PTBBuffer_ST* buffer) {
     if (buffer) {
-        PtbNode* new_node = ptbAllocNode(
+        PTBNode_ST* new_node = allocNode(
             pscGetTokenIgnoring(PTY_NONE, buffer->source_code), buffer->last
         );
 
@@ -56,34 +41,36 @@ PtbBuffer ptbInsertNode (PtbBuffer* buffer) {
         if (buffer->last)  buffer->last->next = new_node;
         buffer->last = new_node;
         buffer->current = new_node;
-        buffer->size++;
+        buffer->size ++;
     } else exit(1); /* trocar por um erro apropriado */
 
     return *buffer;
 }
 
-PtbBuffer ptbNew (FILE* source_code) {
-    if (source_code) {
-        PtbBuffer buffer_return = { 0, NULL, NULL, NULL, source_code };
+/* ========================================================================== */
 
-        return ptbInsertNode(&buffer_return);
+PTBBuffer_ST ptbDef (FILE* source_code) {
+    if (source_code) {
+        PTBBuffer_ST buffer_return = { 0, NULL, NULL, NULL, source_code };
+
+        return insertNode(&buffer_return);
     } exit(1); /* trocar por um erro apropriado */
 }
 
-PtyToken ptbGetToken (PtbBuffer *buffer) {
+PTYToken_ST ptbGetToken (PTBBuffer_ST* buffer) {
     if (buffer) {
-        PtyToken token_return = buffer->current->token;
+        PTYToken_ST token_return = buffer->current->token;
 
-        if (!buffer->current->next) ptbInsertNode(buffer);
+        if (!buffer->current->next) insertNode(buffer);
         else buffer->current = buffer->current->next;
 
         return token_return;
     } exit(1); /* trocar por um erro apropriado */
 }
 
-PtyToken ptbGoBack (PtbBuffer *buffer) {
+PTYToken_ST ptbGoBack (PTBBuffer_ST* buffer) {
     if (buffer) {
-        PtyToken token_return = buffer->current->token;
+        PTYToken_ST token_return = buffer->current->token;
 
         if (buffer->current->previous)
             buffer->current = buffer->current->previous;
@@ -92,11 +79,11 @@ PtyToken ptbGoBack (PtbBuffer *buffer) {
     } exit(1); /* trocar por um erro apropriado */
 }
 
-PtyToken ptbLookNextToken (PtbBuffer *buffer) {
+PTYToken_ST ptbLookNextToken (PTBBuffer_ST *buffer) {
     if (buffer) {
         if (buffer->current->next) return buffer->current->next->token;
         else {
-            PtbNode* new_node = ptbAllocNode(
+            PTBNode_ST* new_node = allocNode(
                 pscGetTokenIgnoring(PTY_NONE, buffer->source_code), buffer->last
             );
 
@@ -110,14 +97,14 @@ PtyToken ptbLookNextToken (PtbBuffer *buffer) {
     } exit(1); /* trocar por um erro apropriado */
 }
 
-PtyToken ptbLookPreviousToken (PtbBuffer *buffer) {
+PTYToken_ST ptbLookPreviousToken (PTBBuffer_ST *buffer) {
     if (buffer) {
         if (buffer->current->previous) return buffer->current->previous->token;
         else return buffer->current->token;
     } exit(1); /* trocar por um erro apropriado */
 }
 
-PtyToken ptbLookCurrentToken (PtbBuffer *buffer) {
+PTYToken_ST ptbLookCurrentToken (PTBBuffer_ST *buffer) {
     if (buffer) {
         return buffer->current->token;
     } exit(1); /* trocar por um erro apropriado */
