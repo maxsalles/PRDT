@@ -16,9 +16,9 @@
 
 /* ========================================================================== */
 
-PTYToken_ST pscGetToken (FILE* source_code);
+PTKToken_ST pscGetToken (FILE* source_code);
 
-PTYToken_ST pscGetTokenIgnoring (int token, FILE* source_code);
+PTKToken_ST pscGetTokenIgnoring (int token, FILE* source_code);
 
 /* ========================================================================== */
 

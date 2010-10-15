@@ -1,8 +1,8 @@
 @uses("prd/IO.itf");
 
-@main int procedure main : (string args[]) {
+@main Int, Procedure main := (String args) {
     for (args; arg) {
-        IO::stdout += arg + "\n"
+        IO::stdout = arg + "\n"
     }
 };
 

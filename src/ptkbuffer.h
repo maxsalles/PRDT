@@ -17,7 +17,7 @@
 /* ========================================================================== */
 
 typedef struct PTBNode_ST {
-    PTYToken_ST token;
+    PTKToken_ST token;
     struct PTBNode_ST* next;
     struct PTBNode_ST* previous;
 } PTBNode_ST;
@@ -34,15 +34,15 @@ typedef struct {
 
 PTBBuffer_ST ptbDefBuffer (FILE* source_code);
 
-PTYToken_ST ptbGetToken (PTBBuffer_ST* buffer);
+PTKToken_ST ptbGetToken (PTBBuffer_ST* buffer);
 
-PTYToken_ST ptbGoBack (PTBBuffer_ST* buffer);
+PTKToken_ST ptbGoBack (PTBBuffer_ST* buffer);
 
-PTYToken_ST ptbLookNextToken (PTBBuffer_ST* buffer);
+PTKToken_ST ptbLookNextToken (PTBBuffer_ST* buffer);
 
-PTYToken_ST ptbLookPreviousToken (PTBBuffer_ST* buffer);
+PTKToken_ST ptbLookPreviousToken (PTBBuffer_ST* buffer);
 
-PTYToken_ST ptbLookCurrentToken (PTBBuffer_ST* buffer);
+PTKToken_ST ptbLookCurrentToken (PTBBuffer_ST* buffer);
 
 /* ========================================================================== */
 
