@@ -1,8 +1,7 @@
 /*
 ** Analisador léxico
-** Prefixo: psc
+** Prefix: psc
 ** $ Herond Robaina Salles
-** 07 Mai 2010
 */
 
 /* ========================================================================== */

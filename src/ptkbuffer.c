@@ -1,8 +1,7 @@
 /*
 ** Buffer de tokens
-** Prefixo: ptb
+** Prefix: ptb
 ** $ Herond Robaina Salles
-** 26 Mai 2010
 */
 
 /* ========================================================================== */

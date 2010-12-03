@@ -1,8 +1,7 @@
 /*
 ** Manipula strings
-** Prefixo: pst
+** Prefix: pst
 ** $ Herond Robaina Salles
-** 07 Mai 2010
 */
 
 /* ========================================================================== */

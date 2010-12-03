@@ -1,8 +1,7 @@
 /*
 ** Define os tipos para o restante do compilador
-** Prefixo: ptk
+** Prefix: ptk
 ** $ Herond Robaina Salles
-** 24 Mai 2010
 */
 
 /* ========================================================================== */
