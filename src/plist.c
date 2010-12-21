@@ -65,6 +65,24 @@ PLTList pltNew (void) {
     return list_return;
 }
 
+PLTList pltCopy (PLTList list) {
+    if (list) {
+        int i;
+        PLTList list_return = pltNew();
+
+        if (list_return) {
+            for (i = 0; i < list->size; i ++)
+                pltAppend(list_return, pltLookElement(list, i));
+
+            return list_return;
+        }
+
+        return NULL;
+    } current_error = PLT_INVALID_ARGUMENT;
+
+    return NULL;
+}
+
 void pltClear (PLTList list) {
     if (list)
         while (list->size) pltGetFirstElement(list);
@@ -135,6 +153,12 @@ void pltInsert (PLTList list, unsigned position, void* element_p) {
             } else current_error = PLT_NOT_ENOUGH_SPACE;
         }
     } else current_error = PLT_INVALID_ARGUMENT;
+}
+
+void pltSetElement (PLTList list, unsigned position, void* element_p) {
+    struct Node* node_p = getNode(list, position);
+
+    if (node_p) node_p->element_p = element_p;
 }
 
 void* pltLookElement (const PLTList list, unsigned position) {
@@ -217,6 +241,17 @@ void* pltGetFirstElement (PLTList list) {
     current_error = PLT_INVALID_ARGUMENT;
 
     return NULL;
+}
+
+void pltReverse (PLTList list) {
+    int i;
+    void* element_p = NULL;
+
+    for (i = 0; i < list->size / 2; i ++) {
+        element_p = pltLookElement(list, i);
+        pltSetElement(list, i, pltLookElement(list, list->size - 1 - i));
+        pltSetElement(list, list->size - 1 - i, element_p);
+    }
 }
 
 unsigned pltLength (const PLTList list) {
@@ -309,7 +344,7 @@ int pltDefaultComparator (
 
 int pltTestCase (void) {
     void *aux1_p = NULL, *aux2_p = NULL;
-    int i, vector1[] = { 1, 2, 3, 4, 5 }, vector2[] = { 6, 7 };
+    int i, j, vector1[] = { 1, 2, 3, 4, 5 }, vector2[] = { 6, 7 };
     int vector3[] = { 1, 2, 2, 2, 5, 6 };
     PLTList list_aux = NULL;
 
@@ -388,6 +423,19 @@ int pltTestCase (void) {
     for (i = 0; i < pltLength(list_aux); i ++)
         PUNT_ASSERT(pltLookElement(list_aux, i) == vector3 + 1);
     PUNT_ASSERT(pltLength(list_aux) == 1);
+
+    /* pltCopy() */
+    pltClear(list);
+    for (i = 0; i < 6; i ++) pltAppend(list, vector1 + i);
+    list_aux = pltCopy(list);
+    for (i = 0; i < pltLength(list); i ++)
+        PUNT_ASSERT(pltLookElement(list_aux, i) == vector1 + i);
+    PUNT_ASSERT(pltLength(list_aux) == pltLength(list));
+
+    /* pltReverse() */
+    pltReverse(list);
+    for (i = 0, j = list->size - 1; i < list->size; i ++, j --)
+        PUNT_ASSERT(pltLookElement(list, i) == vector1 + j);
 
     return 1;
 }

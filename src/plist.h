@@ -31,6 +31,8 @@ typedef struct PLTList_ST* PLTList;
 
 PLTList pltNew (void); /* OK */
 
+PLTList pltCopy (PLTList list);
+
 void pltClear (PLTList list); /* OK */
 
 void pltDestroy (PLTList* list_p); /* OK */
@@ -40,6 +42,8 @@ void pltAppend (PLTList list, void* element_p); /* OK */
 void pltInject (PLTList list, void* element_p); /* OK */
 
 void pltInsert (PLTList list, unsigned position, void* element_p); /* OK */
+
+void pltSetElement (PLTList list, unsigned position, void* element_p);
 
 void* pltLookElement (const PLTList list, unsigned position); /* OK */
 
@@ -52,6 +56,8 @@ void* pltGetElement (PLTList list, unsigned position); /* OK */
 void* pltGetLastElement (PLTList list); /* OK */
 
 void* pltGetFirstElement (PLTList list); /* OK */
+
+void pltReverse (PLTList list);
 
 unsigned pltLength (const PLTList list); /* OK */
 
