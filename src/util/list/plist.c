@@ -12,31 +12,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "punit.h"
 #include "plist.h"
+#include "plist_imp.h"
 
 /* ========================================================================== */
 
-struct Node {
-    void* element_p;
-    struct Node* next;
-    struct Node* previous;
-};
-
-struct PLTList_ST {
-    unsigned size;
-    struct Node* first;
-    struct Node* last;
-};
+int plt_current_error = PLT_NO_ERROR;
 
 /* ========================================================================== */
 
-static int current_error = PLT_NO_ERROR;
-
-/* ========================================================================== */
-
-static struct Node* getNode (PLTList list, unsigned position) {
-    struct Node* node_p = NULL;
+struct PLTNode* pltGetNode (PLTList list, unsigned position) {
+    struct PLTNode* node_p = NULL;
 
     if (list && (position < list->size)) {
         int i;
@@ -60,7 +46,7 @@ PLTList pltNew (void) {
         list_return->size = 0;
         list_return->first = NULL;
         list_return->last = NULL;
-    } else current_error = PLT_NOT_ENOUGH_SPACE;
+    } else plt_current_error = PLT_NOT_ENOUGH_SPACE;
 
     return list_return;
 }
@@ -78,7 +64,7 @@ PLTList pltCopy (PLTList list) {
         }
 
         return NULL;
-    } current_error = PLT_INVALID_ARGUMENT;
+    } plt_current_error = PLT_INVALID_ARGUMENT;
 
     return NULL;
 }
@@ -86,20 +72,23 @@ PLTList pltCopy (PLTList list) {
 void pltClear (PLTList list) {
     if (list)
         while (list->size) pltGetFirstElement(list);
-    else current_error = PLT_INVALID_ARGUMENT;
+    else plt_current_error = PLT_INVALID_ARGUMENT;
 }
 
 
 void pltDestroy (PLTList* list_p) {
     if (list_p) {
         pltClear(*list_p);
+        free(*list_p);
         *list_p = NULL;
-    } else current_error = PLT_INVALID_ARGUMENT;
+    } else plt_current_error = PLT_INVALID_ARGUMENT;
 }
 
 void pltAppend (PLTList list, void* element_p) {
     if (list && element_p) {
-        struct Node* node_p = (struct Node*) malloc(sizeof(struct Node));
+        struct PLTNode* node_p = (struct PLTNode*) malloc(
+            sizeof(struct PLTNode)
+        );
 
         if (node_p) {
             node_p->next = NULL;
@@ -111,13 +100,15 @@ void pltAppend (PLTList list, void* element_p) {
             if (!list->size) list->first = node_p;
             list->size ++;
 
-        } else current_error = PLT_NOT_ENOUGH_SPACE;
-    } else current_error = PLT_INVALID_ARGUMENT;
+        } else plt_current_error = PLT_NOT_ENOUGH_SPACE;
+    } else plt_current_error = PLT_INVALID_ARGUMENT;
 }
 
 void pltInject (PLTList list, void *element_p) {
     if (list && element_p) {
-        struct Node* node_p = (struct Node*) malloc(sizeof(struct Node*));
+        struct PLTNode* node_p = (struct PLTNode*) malloc(
+            sizeof(struct PLTNode*)
+        );
 
         if (node_p) {
             node_p->next = list->first;
@@ -127,19 +118,19 @@ void pltInject (PLTList list, void *element_p) {
             if (list->first) list->first->previous = node_p;
             list->first = node_p;
             list->size ++;
-        } else current_error = PLT_NOT_ENOUGH_SPACE;
-    } else current_error = PLT_INVALID_ARGUMENT;
+        } else plt_current_error = PLT_NOT_ENOUGH_SPACE;
+    } else plt_current_error = PLT_INVALID_ARGUMENT;
 }
 
 void pltInsert (PLTList list, unsigned position, void* element_p) {
-    struct Node* node_p = NULL;
+    struct PLTNode* node_p = NULL;
 
     if (list && element_p && (position < list->size)) {
         if (position == list->size - 1) pltAppend(list, element_p);
         else if (position == 0) pltInject(list, element_p);
         else {
-            node_p = (struct Node*) malloc(sizeof(struct Node*));
-            struct Node* current_node_p = getNode(list, position);
+            node_p = (struct PLTNode*) malloc(sizeof(struct PLTNode*));
+            struct PLTNode* current_node_p = pltGetNode(list, position);
 
             if (node_p) {
                 node_p->next = current_node_p;
@@ -150,35 +141,35 @@ void pltInsert (PLTList list, unsigned position, void* element_p) {
                 current_node_p->previous = node_p;
 
                 list->size ++;
-            } else current_error = PLT_NOT_ENOUGH_SPACE;
+            } else plt_current_error = PLT_NOT_ENOUGH_SPACE;
         }
-    } else current_error = PLT_INVALID_ARGUMENT;
+    } else plt_current_error = PLT_INVALID_ARGUMENT;
 }
 
 void pltSetElement (PLTList list, unsigned position, void* element_p) {
-    struct Node* node_p = getNode(list, position);
+    struct PLTNode* node_p = pltGetNode(list, position);
 
     if (node_p) node_p->element_p = element_p;
 }
 
 void* pltLookElement (const PLTList list, unsigned position) {
     if (list && (position < list->size))
-        return getNode(list, position)->element_p;
-    else current_error = PLT_INVALID_ARGUMENT;
+        return pltGetNode(list, position)->element_p;
+    else plt_current_error = PLT_INVALID_ARGUMENT;
 
     return NULL;
 }
 
 void* pltLookLastElement (const PLTList list) {
     if (list && list->size) return list->last->element_p;
-    current_error = PLT_INVALID_ARGUMENT;
+    plt_current_error = PLT_INVALID_ARGUMENT;
 
     return NULL;
 }
 
 void* pltLookFirstElement (const PLTList list) {
     if (list && list->size) return list->first->element_p;
-    current_error = PLT_INVALID_ARGUMENT;
+    plt_current_error = PLT_INVALID_ARGUMENT;
 
     return NULL;
 }
@@ -188,7 +179,7 @@ void* pltGetElement (PLTList list, unsigned position) {
         if (! position) return pltGetFirstElement(list);
         else if (position == list->size - 1) return pltGetLastElement(list);
         else {
-            struct Node* node = getNode(list, position);
+            struct PLTNode* node = pltGetNode(list, position);
             void* element_p = node->element_p;
 
             node->previous->next = node->next;
@@ -200,14 +191,14 @@ void* pltGetElement (PLTList list, unsigned position) {
         }
     }
 
-    current_error = PLT_INVALID_ARGUMENT;
+    plt_current_error = PLT_INVALID_ARGUMENT;
 
     return NULL;
 }
 
 void* pltGetLastElement (PLTList list) {
     if (list && list->size) {
-        struct Node* last_node = list->last;
+        struct PLTNode* last_node = list->last;
         void* element_p = list->last->element_p;
 
         if (list->last->previous) list->last->previous->next = NULL;
@@ -219,14 +210,14 @@ void* pltGetLastElement (PLTList list) {
         return element_p;
     }
 
-    current_error = PLT_INVALID_ARGUMENT;
+    plt_current_error = PLT_INVALID_ARGUMENT;
 
     return NULL;
 }
 
 void* pltGetFirstElement (PLTList list) {
     if (list && list->size) {
-        struct Node* first_node = list->first;
+        struct PLTNode* first_node = list->first;
         void* element_p = list->first->element_p;
 
         if (list->first->next) list->first->next->previous = NULL;
@@ -238,7 +229,7 @@ void* pltGetFirstElement (PLTList list) {
         return element_p;
     }
 
-    current_error = PLT_INVALID_ARGUMENT;
+    plt_current_error = PLT_INVALID_ARGUMENT;
 
     return NULL;
 }
@@ -256,7 +247,7 @@ void pltReverse (PLTList list) {
 
 unsigned pltLength (const PLTList list) {
     if (list) return list->size;
-    else current_error = PLT_INVALID_ARGUMENT;
+    else plt_current_error = PLT_INVALID_ARGUMENT;
 
     return 0;
 }
@@ -268,7 +259,7 @@ PLTList pltSearch (
 ) {
     if (list && element_of_comparison_p) {
         int i;
-        struct Node* node_p = NULL;
+        struct PLTNode* node_p = NULL;
         PLTList list_return = pltNew();
 
         comparator = comparator ? comparator : PLT_DEFAULT_COMPARATOR;
@@ -283,7 +274,7 @@ PLTList pltSearch (
 
             return list_return;
         }
-    } else current_error = PLT_INVALID_ARGUMENT;
+    } else plt_current_error = PLT_INVALID_ARGUMENT;
 
     return NULL;
 }
@@ -295,7 +286,7 @@ void* pltSearchElement (
 ) {
     if (list && element_of_comparison_p) {
         int i;
-        struct Node* node_p = NULL;
+        struct PLTNode* node_p = NULL;
 
         comparator = comparator ? comparator : PLT_DEFAULT_COMPARATOR;
 
@@ -306,15 +297,15 @@ void* pltSearchElement (
         ) if (comparator(node_p->element_p, element_of_comparison_p))
             return node_p->element_p;
 
-    } else current_error = PLT_INVALID_ARGUMENT;
+    } else plt_current_error = PLT_INVALID_ARGUMENT;
 
     return NULL;
 }
 
 int pltGetError (void) {
-    int error_return = current_error;
+    int error_return = plt_current_error;
 
-    current_error = PLT_NO_ERROR;
+    plt_current_error = PLT_NO_ERROR;
 
     return error_return;
 }
@@ -322,7 +313,7 @@ int pltGetError (void) {
 void pltPrint (const PLTList list) {
     if (list) {
         int i = 0;
-        struct Node* node_p = NULL;
+        struct PLTNode* node_p = NULL;
 
         for (node_p = list->first; i < list->size; node_p = node_p->next, i ++)
             printf("%i:%p ", i, node_p->element_p);
@@ -338,106 +329,6 @@ int pltDefaultComparator (
     void* element_of_comparison_p
 ) {
     return element_p == element_of_comparison_p;
-}
-
-/* ========================================================================== */
-
-int pltTestCase (void) {
-    void *aux1_p = NULL, *aux2_p = NULL;
-    int i, j, vector1[] = { 1, 2, 3, 4, 5 }, vector2[] = { 6, 7 };
-    int vector3[] = { 1, 2, 2, 2, 5, 6 };
-    PLTList list_aux = NULL;
-
-    /* pltNew() */
-    PLTList list = pltNew();
-    PUNT_ASSERT(list != NULL);
-    PUNT_ASSERT(list->size == 0);
-    PUNT_ASSERT(list->first == NULL);
-    PUNT_ASSERT(list->last == NULL);
-
-    /* pltAppend(), pltLookLastElement(), pltLength() */
-    for (i = 0; i < 5; i ++) {
-        pltAppend(list, vector1 + i);
-        PUNT_ASSERT(pltLookLastElement(list) == vector1 + i);
-    }
-    PUNT_ASSERT(pltLength(list) == 5);
-
-    /* pltInject(), pltLookFirstElement() */
-    for (i = 0; i < 2; i ++) {
-        pltInject(list, vector2 + i);
-        PUNT_ASSERT(pltLookFirstElement(list) == vector2 + i);
-    }
-    PUNT_ASSERT(pltLength(list) == 7);
-
-    /* pltInsert(), pltLookElement() */
-    pltInsert(list, 4, vector1 + 3);
-    PUNT_ASSERT(pltLookElement(list, 4) == vector1 + 3);
-    PUNT_ASSERT(pltLength(list) == 8);
-
-    /* pltGetFirstElement() */
-    aux1_p = pltLookFirstElement(list);
-    aux2_p = pltGetFirstElement(list);
-    PUNT_ASSERT(aux1_p == aux2_p);
-    PUNT_ASSERT(pltLookFirstElement(list) != aux2_p && aux2_p != NULL);
-    PUNT_ASSERT(pltLength(list) == 7);
-
-    /* pltGetLastElement() */
-    aux1_p = pltLookLastElement(list);
-    aux2_p = pltGetLastElement(list);
-    PUNT_ASSERT(aux1_p == aux2_p);
-    PUNT_ASSERT(pltLookLastElement(list) != aux2_p && aux2_p != NULL);
-    PUNT_ASSERT(pltLength(list) == 6);
-
-    /* pltGetElement() */
-    aux1_p = pltLookElement(list, 2);
-    aux2_p = pltGetElement(list, 2);
-    PUNT_ASSERT(aux1_p == aux2_p);
-    PUNT_ASSERT(pltLookElement(list, 2) != aux2_p && aux2_p != NULL);
-    PUNT_ASSERT(pltLength(list) == 5);
-
-    /* pltClear() */
-    pltClear(list);
-    PUNT_ASSERT(pltLength(list) == 0);
-    PUNT_ASSERT(list->first == NULL);
-    PUNT_ASSERT(list->last == NULL);
-
-    /* pltDestroy() */
-    pltDestroy(&list);
-    PUNT_ASSERT(list == NULL);
-
-    /* pltGetError() */
-    current_error = PLT_INVALID_ARGUMENT;
-    PUNT_ASSERT(pltGetError() == PLT_INVALID_ARGUMENT);
-    PUNT_ASSERT(pltGetError() == PLT_NO_ERROR);
-
-    /* pltSearchElement() */
-    list = pltNew();
-    for (i = 0; i < 5; i ++) pltAppend(list, vector1 + i);
-    aux1_p = pltSearchElement(list, PLT_DEFAULT_COMPARATOR, vector1 + 3);
-    PUNT_ASSERT(aux1_p == vector1 + 3);
-
-    /* pltSearch() */
-    pltClear(list);
-    for (i = 0; i < 6; i ++) pltAppend(list, vector3 + i);
-    list_aux = pltSearch(list, PLT_DEFAULT_COMPARATOR, vector3 + 1);
-    for (i = 0; i < pltLength(list_aux); i ++)
-        PUNT_ASSERT(pltLookElement(list_aux, i) == vector3 + 1);
-    PUNT_ASSERT(pltLength(list_aux) == 1);
-
-    /* pltCopy() */
-    pltClear(list);
-    for (i = 0; i < 6; i ++) pltAppend(list, vector1 + i);
-    list_aux = pltCopy(list);
-    for (i = 0; i < pltLength(list); i ++)
-        PUNT_ASSERT(pltLookElement(list_aux, i) == vector1 + i);
-    PUNT_ASSERT(pltLength(list_aux) == pltLength(list));
-
-    /* pltReverse() */
-    pltReverse(list);
-    for (i = 0, j = list->size - 1; i < list->size; i ++, j --)
-        PUNT_ASSERT(pltLookElement(list, i) == vector1 + j);
-
-    return 1;
 }
 
 /* ========================================================================== */

@@ -29,53 +29,53 @@ typedef struct PLTList_ST* PLTList;
 
 /* ========================================================================== */
 
-PLTList pltNew (void); /* OK */
+PLTList pltNew (void);
 
 PLTList pltCopy (PLTList list);
 
-void pltClear (PLTList list); /* OK */
+void pltClear (PLTList list);
 
-void pltDestroy (PLTList* list_p); /* OK */
+void pltDestroy (PLTList* list_p);
 
-void pltAppend (PLTList list, void* element_p); /* OK */
+void pltAppend (PLTList list, void* element_p);
 
-void pltInject (PLTList list, void* element_p); /* OK */
+void pltInject (PLTList list, void* element_p);
 
-void pltInsert (PLTList list, unsigned position, void* element_p); /* OK */
+void pltInsert (PLTList list, unsigned position, void* element_p);
 
 void pltSetElement (PLTList list, unsigned position, void* element_p);
 
-void* pltLookElement (const PLTList list, unsigned position); /* OK */
+void* pltLookElement (const PLTList list, unsigned position);
 
-void* pltLookLastElement (const PLTList list); /* OK */
+void* pltLookLastElement (const PLTList list);
 
-void* pltLookFirstElement (const PLTList list); /* OK */
+void* pltLookFirstElement (const PLTList list);
 
-void* pltGetElement (PLTList list, unsigned position); /* OK */
+void* pltGetElement (PLTList list, unsigned position);
 
-void* pltGetLastElement (PLTList list); /* OK */
+void* pltGetLastElement (PLTList list);
 
-void* pltGetFirstElement (PLTList list); /* OK */
+void* pltGetFirstElement (PLTList list);
 
 void pltReverse (PLTList list);
 
-unsigned pltLength (const PLTList list); /* OK */
+unsigned pltLength (const PLTList list);
 
 PLTList pltSearch (
     const PLTList list,
     int (*comparator) (const void*, void*),
     void* element_of_comparison_p
-); /* OK */
+);
 
 void* pltSearchElement (
     const PLTList list,
     int (*comparator) (const void*, void*),
     void* element_of_comparison_p
-); /* OK */
+);
 
-int pltGetError (void); /* OK */
+int pltGetError (void);
 
-void pltPrint (const PLTList list); /* OK */
+void pltPrint (const PLTList list);
 
 /* ========================================================================== */
 
@@ -83,14 +83,6 @@ int pltDefaultComparator (
     const void* element_p,
     void* element_of_comparison_p
 );
-
-/* ========================================================================== */
-
-#ifdef PLT_TEST_CASE
-
-int pltTestCase (void);
-
-#endif
 
 /* ========================================================================== */
 
