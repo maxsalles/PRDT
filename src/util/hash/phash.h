@@ -23,29 +23,29 @@ enum PHSErros_EN {
 
 struct PHSRash_ST;
 
-typedef struct PHSRash_ST* PHSRash;
+typedef struct PHSHash_ST* PHSHash;
 
 /* ========================================================================== */
 
-PHSRash phsNew (void);
+PHSHash phsNew (void);
 
-PHSRash phsCopy (const PHSRash rash);
+PHSHash phsCopy (const PHSHash hash);
 
-void phsClear (PHSRash rash);
+void phsClear (PHSHash hash);
 
-void phsDestroy (PHSRash* rash_p);
+void phsDestroy (PHSHash* hash_p);
 
-void phsAdd (PHSRash rash, const void* key, const void* element_p);
+void phsAdd (PHSHash hash, const void* key, const void* element_p);
 
-void phsRemoveElement (PHSRash rash, const void* element_p);
+void phsRemoveElement (PHSHash hash, const void* element_p);
 
-void phsRemoveKey (PHSRash rash, const void* key);
+void phsRemoveKey (PHSHash hash, const void* key);
 
-int phsHasElement (const PHSRash rash, const void* elemento_p);
+int phsHasElement (const PHSHash hash, const void* elemento_p);
 
-int phsHasKey (const PHSRash rash, const void* key);
+int phsHasKey (const PHSHash hash, const void* key);
 
-unsigned phsLength (const PHSRash rash);
+unsigned phsLength (const PHSHash hash);
 
 PLTList phsSearch (
     const PHSHash hash,
@@ -61,7 +61,7 @@ void* phsSearchElement (
 
 int phsGetError (void);
 
-void phsPrint (const PHSHash list);
+void phsPrint (const PHSHash hash);
 
 /* ========================================================================== */
 

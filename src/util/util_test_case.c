@@ -4,6 +4,8 @@
 #include "punit.h"
 #include "list/plist.h"
 #include "list/plist_imp.h"
+#include "hash/phash.h"
+#include "hash/phash_imp.h"
 
 /* ========================================================================== */
 
@@ -111,9 +113,27 @@ int listTestCase () {
 
 /* ========================================================================== */
 
+int hashTestcase () {
+    int keys[] = { 1, 2, 3, 4, 5 };
+    int i;
+
+    PHSHash hash = phsNew();
+
+    for (i = 0; i < 5; i ++)
+        phsAdd(hash, keys + i, "Herond");
+
+    phsPrint(hash);
+
+    return 1;
+}
+
+/* ========================================================================== */
+
 int main (void) {
 
-    listTestCase();
+    hashTestcase();
+
+    /*listTestCase();*/
 
     return 0;
 }
