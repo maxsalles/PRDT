@@ -118,11 +118,15 @@ int hashTestcase () {
     int i;
 
     PHSHash hash = phsNew();
+    PHSHash copy = NULL;
 
     for (i = 0; i < 5; i ++)
         phsAdd(hash, keys + i, "Herond");
 
+    copy = phsCopy(hash);
+
     phsPrint(hash);
+    phsPrint(copy);
 
     return 1;
 }

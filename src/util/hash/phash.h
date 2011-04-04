@@ -27,7 +27,7 @@ typedef struct PHSHash_ST* PHSHash;
 
 /* ========================================================================== */
 
-PHSHash phsNew (void);
+PHSHash phsNew (void); /* OK */
 
 PHSHash phsCopy (const PHSHash hash);
 
@@ -35,7 +35,7 @@ void phsClear (PHSHash hash);
 
 void phsDestroy (PHSHash* hash_p);
 
-void phsAdd (PHSHash hash, const void* key, const void* element_p);
+void phsAdd (PHSHash hash, const void* key, const void* element_p); /* OK */
 
 void phsRemoveElement (PHSHash hash, const void* element_p);
 
@@ -61,7 +61,7 @@ void* phsSearchElement (
 
 int phsGetError (void);
 
-void phsPrint (const PHSHash hash);
+void phsPrint (const PHSHash hash); /* OK */
 
 /* ========================================================================== */
 

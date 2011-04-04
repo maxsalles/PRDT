@@ -68,6 +68,36 @@ PHSHash phsNew () {
     return rash_return;
 }
 
+PHSHash phsCopy (const PHSHash hash) {
+    PHSHash hash_return = phsNew();
+    int i;
+
+    if (hash_return) {
+        printf("1"); getchar();
+        hash_return->keys = pltCopy(hash->keys);
+
+        if (hash_return->keys) {
+            PLTList ptr = NULL;
+
+            for (i = 0; i < pltLength(hash_return->keys); i ++) {
+                printf("2"); getchar();
+
+                void* ptr2 = pltLookElement(hash->keys, i);
+
+                printf("3"); getchar();
+
+                ptr = pltCopy(ptr2);
+
+                printf("4"); getchar();
+
+                pltSetElement(hash_return->keys, i, ptr);
+            }
+        }
+    }
+
+    return hash_return;
+}
+
 void phsAdd (PHSHash hash, const void* key, const void* element_p) {
     if (hash && key && element_p) {
         struct PHSNode_ST* node = pltSearchElement(
